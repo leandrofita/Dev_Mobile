@@ -82,7 +82,7 @@ const Cadastro = ({ navigation }) => {
       >
         <AlertDialog.Content>
           <AlertDialog.Header>TUDO CERTO POR AQUI!</AlertDialog.Header>
-          <AlertDialog.Body>USUÁRIO CADASTRADO COM SUCESSO!</AlertDialog.Body>
+          <AlertDialog.Body>USUÁRIO CADASTRADO COM SUCESSO! Clique em sair para voltar para a tela inicial</AlertDialog.Body>
           <Button.Group space={2}>
           <Button
                 variant="unstyled"
