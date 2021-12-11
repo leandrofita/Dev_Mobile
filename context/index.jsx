@@ -1,21 +1,19 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
 export const UsuarioContext = createContext();
 export const UsuarioProvider = ({children}) => {
- 
-const [usuario, setUsuario] = useState(estadoInicial);
+const [usuario, setUsuario] = useState();
 
-  const estadoInicial = async (usuario) => {
-    try {
-      const jsonValue = JSON.stringify(usuario)
-      await AsyncStorage.setItem('@usuario', jsonValue)
-    } catch (e) {
-      return null;
-    }
-  }
+
+useEffect(()=> {
+  AsyncStorage.getItem("@usuario").then(login => {
+    const usuarioObj = login ? JSON.parse(login) : undefined
+    setUsuario(usuarioObj);
+  })
+}, [])
 
 
   return (

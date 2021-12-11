@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 
 import { UsuarioContext } from "../context";
 
@@ -28,7 +28,8 @@ import {
 import Login from "../pages/Login";
 import { AntDesign } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
-import Cadastro from "../pages/Cadastro"
+import Cadastro from "../pages/Cadastro";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Drawer = createDrawerNavigator();
 
@@ -44,13 +45,46 @@ const getIcon = (screenName) => {
       return "book";
     case "Cadastrar":
       return "adduser"
+      case "Sair":
+      return "logout"
 
       return undefined;
   }
 };
 
 function CustomDrawerContent(props) {
-  console.log(props.usuario)
+
+  const { setUsuario } = useContext(UsuarioContext);
+  const renderLogout = () => {
+    return (
+      <Pressable
+        px="5"
+        py="3"
+        rounded="md"
+        bg={"transparent"}
+        onPress={() => {
+          setUsuario(undefined);
+          AsyncStorage.removeItem("@usuario").then(() => {
+            props.navigation.navigate("Login");
+          });
+        }}
+      >
+<HStack space="7" alignItems="center">
+          <Icon
+            color={"#A2A1A6"}
+            size="5"
+            as={<AntDesign name={getIcon("Sair")} />}
+          />
+          <Text
+            fontWeight="500"            
+          >
+            Sair
+          </Text>
+        </HStack>
+      </Pressable>
+    );
+  };
+  
   return (
     <DrawerContentScrollView {...props} safeArea>
       <VStack space="6" my="2" mx="1">
@@ -98,6 +132,7 @@ function CustomDrawerContent(props) {
                 </HStack>
               </Pressable>
             ))}
+            {renderLogout()}
           </VStack>
         </VStack>
       </VStack>
@@ -109,7 +144,7 @@ function MyDrawer({ usuario }) {
     <Box safeArea flex={1}>
       <Drawer.Navigator
         drawerContent={(props) => <CustomDrawerContent usuario={usuario} {...props} />}
-        
+        initialRouteName="Login"
         screenOptions={{headerShown: usuario ? true : false}}
       >
 
@@ -123,6 +158,18 @@ function MyDrawer({ usuario }) {
     </Box>
   );
 }
+const Logout = ({navigation}) => {
+  const { setUsuario } = useContext(UsuarioContext);
+  useEffect(() => {
+    setUsuario(undefined);
+    AsyncStorage.removeItem("@usuario");
+    navigation.navigate("Login");
+
+  }, [])
+  return<></>
+}
+
+
 export default function Menu() {
   const { usuario } = useContext(UsuarioContext);
   return (

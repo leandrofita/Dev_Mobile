@@ -14,6 +14,7 @@ import { Container } from "../components/Container";
 import Title from "../components/Title";
 import { UsuarioContext } from "../context";
 import { AntDesign } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ navigation }) => {
   const [senha, setSenha] = useState();
@@ -32,7 +33,11 @@ const Login = ({ navigation }) => {
         email,
         senha,
       })
-      .then((result) => {
+      .then(async (result) => {
+        const usuarioEmString = JSON.stringify(result.data);
+        AsyncStorage.removeItem("@usuario").then(() => {
+          AsyncStorage.setItem("@usuario", usuarioEmString);
+        })
         setUsuario(result.data);
         limparCampos();
       })

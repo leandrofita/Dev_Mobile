@@ -1,11 +1,13 @@
 import axios from "axios";
 import {
-  AlertDialog, Button, Center,
-  Heading, Input,
-  Stack
+  AlertDialog,
+  Button,
+  Center,
+  Heading,
+  Input,
+  Stack,
 } from "native-base";
 import React, { useState } from "react";
-
 
 const Cadastro = ({ navigation }) => {
   const [nome, setNome] = useState();
@@ -13,51 +15,94 @@ const Cadastro = ({ navigation }) => {
   const [senha, setSenha] = useState();
   const [usuario, setUsuario] = useState();
 
-  const [isOpenDeleted, setIsOpenDeleted] = useState(false);
+  const [camposVazios, setCamposVazios] = useState(false);
 
-  const cancelRef = React.useRef(null)
+  const [cadastroOk, setCadastroOk] = useState(false);
+
+  const cancelRef = React.useRef(null);
 
   const efetuarCadastro = () => {
-    axios
-      .post("https://secret-headland-69654.herokuapp.com/usuario", {
-        nome,
-        email,
-        senha,
-      })
-      .then((result) => {
-        setUsuario(result.data);
-        setIsOpenDeleted(true);
-        limparCampos();
-        /* navigation.goBack(); */
-      });
+    debugger
+    if (nome && email && senha) {
+      axios
+        .post("https://secret-headland-69654.herokuapp.com/usuario", {
+          nome,
+          email,
+          senha,
+        })
+        .then((result) => {
+          setUsuario(result.data);
+          setCadastroOk(true);
+          limparCampos();
+          /* navigation.goBack(); */
+        });
+    } else {
+      setCamposVazios(true);
+    }
   };
-
   const limparCampos = () => {
     setNome("");
     setEmail("");
     setSenha("");
   };
 
+  const cadastroEfetuado = () => {
+    setCadastroOk(false)
+    navigation.navigate("Login");
+
+  }
+
   return (
     <>
       <AlertDialog
         leastDestructiveRef={cancelRef}
-        isOpen={isOpenDeleted}
+        isOpen={camposVazios}
         onClose={() => {
-        setIsOpenDeleted(false);
+          setCamposVazios(false);
         }}
       >
         <AlertDialog.Content>
           <AlertDialog.CloseButton />
-          <AlertDialog.Header>Tudo certo!</AlertDialog.Header>
+          <AlertDialog.Header>CAMPOS INVÁLIDOS</AlertDialog.Header>
           <AlertDialog.Body>
-            O cadastro foi realizado com sucesso!
+            TODOS OS CAMPOS PRECISAM ESTAR PREENCHIDOS
           </AlertDialog.Body>
           <AlertDialog.Footer></AlertDialog.Footer>
         </AlertDialog.Content>
       </AlertDialog>
-      <Center>
 
+
+
+      <AlertDialog
+        leastDestructiveRef={cancelRef}
+        isOpen={cadastroOk}
+        onClose={() => {
+        setCadastroOk(false);
+        }}
+      >
+        <AlertDialog.Content>
+          <AlertDialog.Header>TUDO CERTO POR AQUI!</AlertDialog.Header>
+          <AlertDialog.Body>USUÁRIO CADASTRADO COM SUCESSO!</AlertDialog.Body>
+          <Button.Group space={2}>
+          <Button
+                variant="unstyled"
+                colorScheme="coolGray"
+                onPress={() => {setCadastroOk(false)}}
+                ref={cancelRef}
+                
+              >
+                Permanecer
+              </Button>
+              <Button  bg="#58bdec" onPress={() => {cadastroEfetuado()}}>
+              Sair
+              </Button>
+            </Button.Group>
+          <AlertDialog.Footer></AlertDialog.Footer>
+        </AlertDialog.Content>
+      </AlertDialog>
+      
+
+      <Center>
         <Stack
           space={4}
           w={{
@@ -69,17 +114,16 @@ const Cadastro = ({ navigation }) => {
             CADASTRO
           </Heading>
 
-          <Input variant="outline" placeholder="Nome completo" />
-          <Input variant="outline" placeholder="Email" />
-          <Input variant="outline" type="password" placeholder="Senha" />
+          <Input variant="outline" value={nome} onChangeText={setNome} placeholder="Nome completo" />
+          <Input variant="outline" value={email} onChangeText={setEmail} placeholder="Email" />
+          <Input variant="outline" value={senha} onChangeText={setSenha} type="password" placeholder="Senha" />
 
           <Button
             size="lg"
             keyboardType="password"
             onPress={() => {
               efetuarCadastro();
-              limparCampos();
-              
+              /* limparCampos(); */
             }}
           >
             Cadastrar
