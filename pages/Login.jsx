@@ -49,7 +49,7 @@ const Login = ({ navigation }) => {
   return (
     <Container>
       <Title>Serratec app</Title>
-      <Text style={{ color: "red" }}>Fuck the World!</Text>
+      <Text style={{ color: "red" }}>Seja bem-vindo(a)!</Text>
       <Collapse isOpen={mostrarMensagemErro}>
         <Alert w="100%" status={"error"}>
           <VStack space={2} flexShrink={1} w="100%">
